@@ -19,9 +19,9 @@ class Es6NavigateCommand(sublime_plugin.TextCommand):
             bck = bck - 1
             if bck < bck_limit:
                 break
-        
+
         path = self.view.substr(sublime.Region(bck+1, fwd))
-        
+
         # relative pathing
         if (path[:2] == "./") :
             file = os.path.dirname(self.view.file_name()) + path[1:] + '.js'
@@ -32,7 +32,10 @@ class Es6NavigateCommand(sublime_plugin.TextCommand):
             if os.path.exists(file):
                 self.view.window().open_file(file)
                 return
-
+            file = os.path.dirname(self.view.file_name()) + path[1:] + '.vue'
+            if os.path.exists(file):
+                self.view.window().open_file(file)
+                return
 
         if (path[:3] == "../") :
             file = os.path.dirname(self.view.file_name()) + '/' + path + '.js'
@@ -40,6 +43,10 @@ class Es6NavigateCommand(sublime_plugin.TextCommand):
                 self.view.window().open_file(file)
                 return
             file = os.path.dirname(self.view.file_name()) + '/' + path + '.coffee'
+            if os.path.exists(file):
+                self.view.window().open_file(file)
+                return
+            file = os.path.dirname(self.view.file_name()) + '/' + path + '.vue'
             if os.path.exists(file):
                 self.view.window().open_file(file)
                 return
@@ -60,6 +67,10 @@ class Es6NavigateCommand(sublime_plugin.TextCommand):
             if os.path.exists(file):
                 self.view.window().open_file(file)
                 return
+            file = module_path + proj + '.vue'
+            if os.path.exists(file):
+                self.view.window().open_file(file)
+                return
 
         node_modules = []
         for folder in self.view.window().folders():
@@ -68,6 +79,7 @@ class Es6NavigateCommand(sublime_plugin.TextCommand):
                 if path.split('/')[0] in os.listdir(folder + '/node_modules'):
                     node_file = folder + '/node_modules/' + path + '.js'
                     coffee_file = folder + '/node_modules/' + path + '.coffee'
+                    coffee_file = folder + '/node_modules/' + path + '.vue'
                     em_addon = folder + '/node_modules/' + path.split('/')[0] + '/addon/' + '/'.join(path.split('/')[1:]) + '.js'
                     em_coffee_addon = folder + '/node_modules/' + path.split('/')[0] + '/addon/' + '/'.join(path.split('/')[1:]) + '.coffee'
                     if os.path.exists(node_file):
@@ -77,10 +89,10 @@ class Es6NavigateCommand(sublime_plugin.TextCommand):
                     elif os.path.exists(em_addon) :
                         self.view.window().open_file(em_addon)
                         return
-                    elif os.path.exists(coffee_file) : 
+                    elif os.path.exists(coffee_file) :
                         self.view.window().open_file(coffee_file)
                         return
-                    elif os.path.exists(em_coffee_addon) : 
+                    elif os.path.exists(em_coffee_addon) :
                         self.view.window().open_file(em_coffee_addon)
 
             # for paths in bower components
